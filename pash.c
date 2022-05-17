@@ -52,9 +52,39 @@ void multi_pair(mpz_t z, const size_t n, mpz_t x[n]) {
     multi_pair(z, p, r);
 }
 
+void multi_unpair(const size_t n, mpz_t res[n], mpz_t z) {
+
+    if(n == 1) {
+        mpz_set(res[0], z);
+        return;
+    }
+
+    mpz_t x, y;
+    mpz_init(x);
+    mpz_init(y);
+
+    unpair(x, y, z);
+
+    if(n == 2) {
+        mpz_set(res[0], x);
+        mpz_set(res[1], y);
+        return;
+    }
+
+    if(__builtin_popcount(n) == 1) {
+        const size_t mid = n >> 1;
+        multi_unpair(mid, res, x);
+        multi_unpair(mid, res + mid, y);
+    } else {
+        const size_t npt = 2 << ((sizeof(int) * 8 - 2) - __builtin_clz(n));
+        multi_unpair(npt, res, x);
+        multi_unpair(n - npt, res + npt, y);
+    }
+}
+
 int main() {
 
-    const int size = 1000000;
+    const int size = 6;
 
     mpz_t z;
 
@@ -67,7 +97,18 @@ int main() {
     mpz_init(z);
 
     multi_pair(z, size, integers);
+    
+    mpz_t output[size];
 
-    size_t sz = mpz_sizeinbase(z, 10);
-    printf("%zu\n", sz);
+    for(int i = 0; i < size; ++i) {
+        mpz_init(output[i]);
+    }
+
+    multi_unpair(size, output, z);
+
+    for(int i = 0; i < size; ++i) {
+        gmp_printf("%Zd, ", output[i]);
+    }
+
+    printf("\n");
 }
