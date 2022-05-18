@@ -29,14 +29,18 @@ int main() {
     mpz_t out[N];
     for(int i = 0; i < N; ++i) {
         mpz_init(out[i]);
+        mpz_clear(in[i]);
     }
 
     // Split z back into the original integers
     multi_unpair(N, out, z);
 
+    mpz_clear(z);
+
     // Print the split integers
     for(int i = 0; i < N; ++i) {
         gmp_printf("%Zd, ", out[i]);
+        mpz_clear(out[i]);
     }
     printf("\n");
 }

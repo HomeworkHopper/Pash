@@ -42,6 +42,8 @@ void multi_pair(mpz_t z, size_t n, mpz_t x[n]) {
     
     if(p == 1) {
         mpz_set(z, r[0]);
+        mpz_clear(r[0]);
+        free(r);
         return;
     }
 
@@ -49,8 +51,14 @@ void multi_pair(mpz_t z, size_t n, mpz_t x[n]) {
         mpz_init(r[i]);
         pair(r[i], x[j], x[j + 1]);
     }
-    
+
     multi_pair(z, p, r);
+
+    for(size_t i = 0; i < p; ++i) {
+        mpz_clear(r[i]);    
+    }
+
+    free(r);
 }
 
 void multi_unpair(size_t n, mpz_t res[n], const mpz_t z) {
@@ -71,6 +79,10 @@ void multi_unpair(size_t n, mpz_t res[n], const mpz_t z) {
     if(n == 2) {
         mpz_set(res[0], x);
         mpz_set(res[1], y);
+
+        mpz_clear(x);
+        mpz_clear(y);
+
         return;
     }
 
@@ -83,4 +95,7 @@ void multi_unpair(size_t n, mpz_t res[n], const mpz_t z) {
         multi_unpair(npt, res, x);
         multi_unpair(n - npt, res + npt, y);
     }
+
+    mpz_clear(x);
+    mpz_clear(y);
 }
