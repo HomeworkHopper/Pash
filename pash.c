@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -26,11 +25,13 @@ void unpair(mpz_t x, mpz_t y, const mpz_t z) {
 }
 
 
-void multi_pair(mpz_t z, const size_t n, mpz_t x[n]) {
+void multi_pair(mpz_t z, size_t n, mpz_t x[n]) {
     
+    assert(n > 0);
+
     const size_t p = (n + 1) >> 1;
 
-    mpz_t *r = malloc(sizeof(mpz_t) * p);
+    mpz_t *r = malloc(sizeof(mpz_t) * p);   // Put it on the heap
     mpz_init(r[p - 1]);
 
     if((n & 1) == 0) {
@@ -52,7 +53,9 @@ void multi_pair(mpz_t z, const size_t n, mpz_t x[n]) {
     multi_pair(z, p, r);
 }
 
-void multi_unpair(const size_t n, mpz_t res[n], mpz_t z) {
+void multi_unpair(size_t n, mpz_t res[n], const mpz_t z) {
+    
+    assert(n > 0);
 
     if(n == 1) {
         mpz_set(res[0], z);
@@ -80,35 +83,4 @@ void multi_unpair(const size_t n, mpz_t res[n], mpz_t z) {
         multi_unpair(npt, res, x);
         multi_unpair(n - npt, res + npt, y);
     }
-}
-
-int main() {
-
-    const int size = 6;
-
-    mpz_t z;
-
-    mpz_t* integers = malloc(sizeof(mpz_t) * size);
-
-    for(int i = 0; i < size; ++i) {
-        mpz_init_set_ui(integers[i], i + 1);
-    }
-
-    mpz_init(z);
-
-    multi_pair(z, size, integers);
-    
-    mpz_t output[size];
-
-    for(int i = 0; i < size; ++i) {
-        mpz_init(output[i]);
-    }
-
-    multi_unpair(size, output, z);
-
-    for(int i = 0; i < size; ++i) {
-        gmp_printf("%Zd, ", output[i]);
-    }
-
-    printf("\n");
 }

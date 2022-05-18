@@ -1,0 +1,42 @@
+#include <stdio.h>
+
+#include "pash.h"
+
+#define N 10
+
+int main() {
+
+    // Starting array of integers
+    mpz_t in[N];
+
+    // Initialize and print each integer
+    for(int i = 0; i < N; ++i) {
+        mpz_init_set_ui(in[i], i + 1);
+        gmp_printf("%Zd, ", in[i]);
+    }
+
+    // Declare and initialize the paired output
+    mpz_t z;
+    mpz_init(z);
+
+    // Pair the array of integers into a single integer (z)
+    multi_pair(z, N, in);
+
+    // Print the generated integer
+    gmp_printf("\n%Zd\n", z);
+
+    // Declare and initialize the array to split z back into
+    mpz_t out[N];
+    for(int i = 0; i < N; ++i) {
+        mpz_init(out[i]);
+    }
+
+    // Split z back into the original integers
+    multi_unpair(N, out, z);
+
+    // Print the split integers
+    for(int i = 0; i < N; ++i) {
+        gmp_printf("%Zd, ", out[i]);
+    }
+    printf("\n");
+}
