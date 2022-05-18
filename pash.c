@@ -31,10 +31,11 @@ void pair(mpz_t z, size_t n, mpz_t x[n]) {
 
     const size_t p = (n + 1) >> 1;
 
-    mpz_t *r = malloc(sizeof(mpz_t) * p);   // Put it on the heap
+    mpz_t *r = malloc(sizeof(mpz_t) * p);   // TODO: Rework this.
     mpz_init(r[p - 1]);
 
-    if((n & 1) == 0) {
+    // Is even?
+    if(!(n & 1)) {
         elegant_pair(r[p - 1], x[n - 2], x[n - 1]);
     } else {
         mpz_set(r[p - 1], x[n - 1]);
