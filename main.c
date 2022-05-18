@@ -25,7 +25,7 @@ int main() {
     fprintf(stdout, "Starting pair... ");
 
     // Pair the array of integers into a single integer (z)
-    multi_pair(z, N, in);
+    pair(z, N, in);
 
     fprintf(stdout, "Done\n");
 
@@ -42,7 +42,7 @@ int main() {
     fprintf(stdout, "Starting unpair... ");
 
     // Split z back into the original integers
-    multi_unpair(N, out, z);
+    unpair(N, out, z);
 
     fprintf(stdout, "Done\n");
 
