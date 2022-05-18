@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include <limits.h>
+
 #include <ctype.h>
 
 #include "pash.h"
@@ -26,8 +28,6 @@ void unpair(mpz_t x, mpz_t y, const mpz_t z) {
 
 
 void multi_pair(mpz_t z, size_t n, mpz_t x[n]) {
-    
-    assert(n > 0);
 
     const size_t p = (n + 1) >> 1;
 
@@ -41,7 +41,7 @@ void multi_pair(mpz_t z, size_t n, mpz_t x[n]) {
     }
     
     if(p == 1) {
-        mpz_set(z, r[0]);
+        mpz_swap(z, r[0]);      // Use swap instead of set to avoid copying
         mpz_clear(r[0]);
         free(r);
         return;
@@ -62,11 +62,9 @@ void multi_pair(mpz_t z, size_t n, mpz_t x[n]) {
 }
 
 void multi_unpair(size_t n, mpz_t res[n], const mpz_t z) {
-    
-    assert(n > 0);
 
     if(n == 1) {
-        mpz_set(res[0], z);
+        mpz_set(res[0], z);     // Must use set because z is constant
         return;
     }
 
@@ -77,8 +75,8 @@ void multi_unpair(size_t n, mpz_t res[n], const mpz_t z) {
     unpair(x, y, z);
 
     if(n == 2) {
-        mpz_set(res[0], x);
-        mpz_set(res[1], y);
+        mpz_swap(res[0], x);    // Use swap instead of set to avoid copying
+        mpz_swap(res[1], y);    // Use swap instead of set to avoid copying
 
         mpz_clear(x);
         mpz_clear(y);
