@@ -1,13 +1,10 @@
 #include <stdlib.h>
 #include <assert.h>
-
-#include <limits.h>
-
 #include <ctype.h>
 
 #include "pash.h"
 
-static void elegant_pair(mpz_t z, const mpz_t x, const mpz_t y) {
+static inline void elegant_pair(mpz_t z, const mpz_t x, const mpz_t y) {
     if(mpz_cmp(y, x) > 0) {     // If y > x
         mpz_mul(z, y, y);       //    z = y * y
     } else {                    // Else
@@ -17,7 +14,7 @@ static void elegant_pair(mpz_t z, const mpz_t x, const mpz_t y) {
     mpz_add(z, z, x);           // z = z + x
 }
 
-static void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
+static inline void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
     mpz_sqrtrem(x, y, z);       // x = sqrt(z), y = z - x * x
     if(mpz_cmp(x, y) > 0) {     // If x > y
         mpz_swap(x, y);         //    SWAP(x, y)
@@ -85,7 +82,8 @@ void unpair(size_t n, mpz_t res[n], const mpz_t z) {
         return;
     }
 
-    if(__builtin_popcount(n) == 1) {
+    // Is perfect power of two?
+    if(!(n & (n - 1))) {
         const size_t mid = n >> 1;
         unpair(mid, res, x);
         unpair(mid, res + mid, y);

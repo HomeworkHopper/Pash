@@ -3,7 +3,7 @@
 
 #include "pash.h"
 
-#define N 2000000
+#define N 1000000
 
 int main() {
 
