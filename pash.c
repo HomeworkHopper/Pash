@@ -91,7 +91,7 @@ void multi_unpair(size_t n, mpz_t res[n], const mpz_t z) {
         multi_unpair(mid, res, x);
         multi_unpair(mid, res + mid, y);
     } else {
-        const size_t npt = 2 << ((sizeof(int) * 8 - 2) - __builtin_clz(n));
+        const size_t npt = 0x80000000 >> __builtin_clz(n);
         multi_unpair(npt, res, x);
         multi_unpair(n - npt, res + npt, y);
     }

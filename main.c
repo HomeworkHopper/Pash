@@ -1,18 +1,19 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "pash.h"
 
-#define N 10
+#define N 500000
 
 int main() {
 
     // Starting array of integers
-    mpz_t in[N];
+    mpz_t* in = malloc(sizeof(mpz_t) * N);
 
     // Initialize and print each integer
     for(int i = 0; i < N; ++i) {
         mpz_init_set_ui(in[i], i + 1);
-        gmp_printf("%Zd, ", in[i]);
+        // gmp_printf("%Zd, ", in[i]);
     }
 
     // Declare and initialize the paired output
@@ -23,7 +24,7 @@ int main() {
     multi_pair(z, N, in);
 
     // Print the generated integer
-    gmp_printf("\n%Zd\n", z);
+    // gmp_printf("\n%Zd\n", z);
 
     // Declare and initialize the array to split z back into
     mpz_t out[N];
@@ -39,7 +40,7 @@ int main() {
 
     // Print the split integers
     for(int i = 0; i < N; ++i) {
-        gmp_printf("%Zd, ", out[i]);
+        //gmp_printf("%Zd, ", out[i]);
         mpz_clear(out[i]);
     }
     printf("\n");
