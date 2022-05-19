@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <ctype.h>
-
+#include <stdio.h>
 #include "pash.h"
 
 static inline void elegant_pair(mpz_t z, const mpz_t x, const mpz_t y) {
@@ -23,40 +23,26 @@ static inline void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
     }
 }
 
-
 void pair(mpz_t z, size_t n, mpz_t x[n]) {
-
+    
     const size_t p = (n + 1) >> 1;
 
-    mpz_t *r = malloc(sizeof(mpz_t) * p);   // TODO: Rework this.
-    mpz_init(r[p - 1]);
-
-    // Is even?
-    if(!(n & 1)) {
-        elegant_pair(r[p - 1], x[n - 2], x[n - 1]);
-    } else {
-        mpz_set(r[p - 1], x[n - 1]);
-    }
-    
-    if(p == 1) {
-        mpz_swap(z, r[0]);      // Use swap instead of set to avoid copying
-        mpz_clear(r[0]);
-        free(r);
-        return;
-    }
-
     for(size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
-        mpz_init(r[i]);
-        elegant_pair(r[i], x[j], x[j + 1]);
+        elegant_pair(z, x[j], x[j + 1]);
+        mpz_swap(x[i], z);
     }
 
-    pair(z, p, r);
-
-    for(size_t i = 0; i < p; ++i) {
-        mpz_clear(r[i]);
+    if(!(n & 1)) {
+        elegant_pair(z, x[n - 2], x[n - 1]);
+        if(p == 1) {
+            return;
+        }
+        mpz_swap(x[p - 1], z);
+    } else {
+        mpz_swap(x[p - 1], x[n - 1]);
     }
 
-    free(r);
+    pair(z, p, x);
 }
 
 void unpair(size_t n, mpz_t res[n], const mpz_t z) {

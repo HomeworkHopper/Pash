@@ -15,7 +15,7 @@ int main() {
     // Initialize and print each integer
     for(int i = 0; i < N; ++i) {
         mpz_init_set_ui(in[i], i + 1);
- //       gmp_printf("%Zd, ", in[i]);
+//        gmp_printf("%Zd, ", in[i]);
     }
 
     // Declare and initialize the paired output
@@ -30,7 +30,7 @@ int main() {
     fprintf(stdout, "Done\n");
 
     // Print the generated integer
-   // gmp_printf("\n%Zd\n", z);
+  //  gmp_printf("\n%Zd\n", z);
 
     // Declare and initialize the array to split z back into
     mpz_t out[N];
@@ -50,7 +50,7 @@ int main() {
 
     // Print the split integers
     for(int i = 0; i < N; ++i) {
-     //   gmp_printf("%Zd, ", out[i]);
+    //    gmp_printf("%Zd, ", out[i]);
         mpz_clear(out[i]);
     }
 }
