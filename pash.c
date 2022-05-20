@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "pash.h"
 
+// TODO Macro?
 static inline void elegant_pair(mpz_t z, const mpz_t x, const mpz_t y) {
     if(mpz_cmp(y, x) > 0) {     // If y > x
         mpz_mul(z, y, y);       //    z = y * y
@@ -14,6 +15,7 @@ static inline void elegant_pair(mpz_t z, const mpz_t x, const mpz_t y) {
     mpz_add(z, z, x);           // z = z + x
 }
 
+// TODO Macro?
 static inline void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
     mpz_sqrtrem(x, y, z);       // x = sqrt(z), y = z - x * x
     if(mpz_cmp(x, y) > 0) {     // If x > y
@@ -25,7 +27,7 @@ static inline void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
 
 static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     
-    const size_t p = (n + 1) >> 1;
+    const size_t p = (n + 1) >> 1;  // Number of pairs
 
     for(size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
         elegant_pair(z, x[j], x[j + 1]);
@@ -40,7 +42,7 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     } else
         mpz_swap(x[p - 1], x[n - 1]);
 
-    pair(z, p, x);
+    pair(z, p, x);  // Recurse
 }
 
 static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
@@ -72,7 +74,7 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
         unpair(mid, res, x);
         unpair(mid, res + mid, y);
     } else {
-        const size_t npt = 0x80000000 >> __builtin_clz(n);
+        const size_t npt = 0x80000000 >> __builtin_clz(n);  // Nearest power of two <= n
         unpair(npt, res, x);
         unpair(n - npt, res + npt, y);
     }
