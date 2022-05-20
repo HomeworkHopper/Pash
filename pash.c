@@ -23,7 +23,7 @@ static inline void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
     }
 }
 
-void pair(mpz_t z, size_t n, mpz_t x[n]) {
+static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     
     const size_t p = (n + 1) >> 1;
 
@@ -34,18 +34,16 @@ void pair(mpz_t z, size_t n, mpz_t x[n]) {
 
     if(!(n & 1)) {
         elegant_pair(z, x[n - 2], x[n - 1]);
-        if(p == 1) {
+        if(p == 1) 
             return;
-        }
         mpz_swap(x[p - 1], z);
-    } else {
+    } else
         mpz_swap(x[p - 1], x[n - 1]);
-    }
 
     pair(z, p, x);
 }
 
-void unpair(size_t n, mpz_t res[n], const mpz_t z) {
+static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
 
     if(n == 1) {
         mpz_set(res[0], z);     // Must use set because z is constant
@@ -59,8 +57,8 @@ void unpair(size_t n, mpz_t res[n], const mpz_t z) {
     elegant_unpair(x, y, z);
 
     if(n == 2) {
-        mpz_swap(res[0], x);    // Use swap instead of set to avoid copying
-        mpz_swap(res[1], y);    // Use swap instead of set to avoid copying
+        mpz_swap(res[0], x);
+        mpz_swap(res[1], y);
 
         mpz_clear(x);
         mpz_clear(y);
@@ -81,4 +79,24 @@ void unpair(size_t n, mpz_t res[n], const mpz_t z) {
 
     mpz_clear(x);
     mpz_clear(y);
+}
+
+void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
+    assert(n != 0);
+
+    if(n == 1) {
+        mpz_swap(target, integers[0]);
+    }
+
+    pair_internal(target, n, integers);
+}
+
+void unpair(const size_t n, mpz_t target[n], const mpz_t integer) {
+    assert(n != 0);
+
+    if(n == 1) {
+        mpz_set(target[0], integer);
+    }
+
+    unpair_internal(n, target, integer);
 }
