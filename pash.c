@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
+
 #include "pash.h"
 
 // TODO Macro?
@@ -25,6 +26,7 @@ static inline void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
     }
 }
 
+// WARNING: This function destroys the provided array
 static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     
     const size_t p = (n + 1) >> 1;  // Number of pairs
