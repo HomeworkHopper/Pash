@@ -74,20 +74,20 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
         const size_t mid = n >> 1;
 
         // Unpair left
-        unpair(mid, res, x);
+        unpair_internal(mid, res, x);
 
         // Unpair right
-        unpair(mid, res + mid, y);
+        unpair_internal(mid, res + mid, y);
     } else {
 
         // 10000000000000000000000000000000 >> number of leading zeros in n
         const size_t npt = 0x80000000 >> __builtin_clz(n);
 
         // Unpair left
-        unpair(npt, res, x);
+        unpair_internal(npt, res, x);
 
         // Unpair right
-        unpair(n - npt, res + npt, y);
+        unpair_internal(n - npt, res + npt, y);
     }
 
     // Clean up
