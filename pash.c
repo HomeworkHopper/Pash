@@ -5,16 +5,15 @@
 
 #include "pash.h"
 
-// TODO Macro?
-static inline void elegant_pair(mpz_t z, const mpz_t x, const mpz_t y) {
-    if(mpz_cmp(y, x) > 0) {     // If y > x
-        mpz_mul(z, y, y);       //    z = y * y
-    } else {                    // Else
-        mpz_mul(z, x, x);       //    z = x * x
-        mpz_add(z, z, y);       //    z = z + y
-    }                           //
-    mpz_add(z, z, x);           // z = z + x
-}
+// pair(mpz_t z, const mpz_t x, const mpz_t y)
+#define PAIR(z, x, y) \
+    if(mpz_cmp(y, x) > 0) { \
+        mpz_mul(z, y, y); \
+    } else { \
+        mpz_mul(z, x, x); \
+        mpz_add(z, z, y); \
+    } \
+    mpz_add(z, z, x);
 
 // TODO Macro?
 static inline void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
@@ -32,12 +31,12 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     const size_t p = (n + 1) >> 1;  // Number of pairs
 
     for(size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
-        elegant_pair(z, x[j], x[j + 1]);
+        PAIR(z, x[j], x[j + 1]);
         mpz_swap(x[i], z);
     }
 
     if(!(n & 1)) {
-        elegant_pair(z, x[n - 2], x[n - 1]);
+        PAIR(z, x[n - 2], x[n - 1]);
         if(p == 1) 
             return;
         mpz_swap(x[p - 1], z);
