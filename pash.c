@@ -5,7 +5,6 @@
 
 #include "pash.h"
 
-// pair(mpz_t z, const mpz_t x, const mpz_t y)
 #define PAIR(z, x, y) \
     if(mpz_cmp(y, x) > 0) { \
         mpz_mul(z, y, y); \
@@ -15,15 +14,13 @@
     } \
     mpz_add(z, z, x);
 
-// TODO Macro?
-static inline void elegant_unpair(mpz_t x, mpz_t y, const mpz_t z) {
-    mpz_sqrtrem(x, y, z);       // x = sqrt(z), y = z - x * x
-    if(mpz_cmp(x, y) > 0) {     // If x > y
-        mpz_swap(x, y);         //    SWAP(x, y)
-    } else {                    // Else
-        mpz_sub(y, y, x);       //     y = y - x
+#define UNPAIR(x, y, z) \
+    mpz_sqrtrem(x, y, z); \
+    if(mpz_cmp(x, y) > 0) { \
+        mpz_swap(x, y); \
+    } else { \
+        mpz_sub(y, y, x); \
     }
-}
 
 // WARNING: This function destroys the provided array
 static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
@@ -54,7 +51,7 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
     }
 
     if(n == 2) {
-        elegant_unpair(res[0], res[1], z);
+        UNPAIR(res[0], res[1], z);
         return;
     }
 
@@ -64,7 +61,7 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
     mpz_init(y);
 
     // Split
-    elegant_unpair(x, y, z);
+    UNPAIR(x, y, z);
 
     // Is perfect power of two?
     if(!(n & (n - 1))) {
