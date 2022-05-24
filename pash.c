@@ -96,12 +96,6 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     // Ensure n > 0
     assert(n);
 
-    // Mindless check
-    if(n == 1) {
-        mpz_swap(target, integers[0]);
-        return;
-    }
-
     // Delegate to actual pair function
     pair_internal(target, n, integers);
 }
@@ -110,12 +104,6 @@ void unpair(const size_t n, mpz_t target[n], const mpz_t integer) {
     
     // Ensure n > 0
     assert(n);
-
-    // Mindless check
-    if(n == 1) {
-        mpz_set(target[0], integer);
-        return;
-    }
 
     // Delegate to actual unpair function
     unpair_internal(n, target, integer);
