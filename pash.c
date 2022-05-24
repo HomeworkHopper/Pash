@@ -40,7 +40,7 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     } else
         mpz_swap(x[p - 1], x[n - 1]);
 
-    pair(z, p, x);  // Recurse
+    pair_internal(z, p, x);  // Recurse
 }
 
 static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
