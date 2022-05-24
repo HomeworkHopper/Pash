@@ -50,37 +50,47 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
 static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
 
     if(n == 1) {
-        mpz_set(res[0], z);     // Must use set because z is constant
+        mpz_set(res[0], z);
         return;
     }
 
+    if(n == 2) {
+        elegant_unpair(res[0], res[1], z);
+        return;
+    }
+
+    // Local vars
     mpz_t x, y;
     mpz_init(x);
     mpz_init(y);
 
+    // Split
     elegant_unpair(x, y, z);
-
-    if(n == 2) {
-        mpz_swap(res[0], x);
-        mpz_swap(res[1], y);
-
-        mpz_clear(x);
-        mpz_clear(y);
-
-        return;
-    }
 
     // Is perfect power of two?
     if(!(n & (n - 1))) {
+
+        // n / 2
         const size_t mid = n >> 1;
+
+        // Unpair left
         unpair(mid, res, x);
+
+        // Unpair right
         unpair(mid, res + mid, y);
     } else {
-        const size_t npt = 0x80000000 >> __builtin_clz(n);  // Nearest power of two <= n
+
+        // 10000000000000000000000000000000 >> number of leading zeros in n
+        const size_t npt = 0x80000000 >> __builtin_clz(n);
+
+        // Unpair left
         unpair(npt, res, x);
+
+        // Unpair right
         unpair(n - npt, res + npt, y);
     }
 
+    // Clean up
     mpz_clear(x);
     mpz_clear(y);
 }
