@@ -22,6 +22,7 @@
         mpz_sub(y, y, x); \
     }
 
+
 static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     
     // Number of groups of two
