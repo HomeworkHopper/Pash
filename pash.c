@@ -22,7 +22,11 @@
         mpz_sub(y, y, x); \
     }
 
-
+/// An internal helper function which complements the pair function.
+///
+/// @param z    the resulting integer's destination
+/// @param n    the number of integers to pair
+/// @param x    the array of integers to pair
 static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     
     // Number of groups of two
@@ -38,7 +42,7 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     if(!(n & 1)) {
         PAIR(z, x[n - 2], x[n - 1]);
     } else {
-        mpz_swap(z, x[n - 1]);
+        mpz_set(z, x[n - 1]);
     }
 
     // If there was only one group, we're done
@@ -53,6 +57,11 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     pair_internal(z, p, x);
 }
 
+/// An internal helper function which complements the unpair function.
+///
+/// @param n    the number of integers to produce
+/// @param res  the resulting integers' destination
+/// @param z    the integer to unpair
 static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
 
     // Base case #1
@@ -88,7 +97,7 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
         unpair_internal(mid, res + mid, y);
     } else {
 
-        // Nearest power of two <= n
+        // Hacker's Delight, First Edition, page 47 
         const size_t npt = 0x80000000 >> __builtin_clz(n);
 
         // Unpair x
@@ -103,6 +112,8 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
     mpz_clear(y);
 }
 
+// This implementation checks it's parameters before 
+// delegating to the actual recursive pairing function.
 void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     
     // Ensure n > 0
@@ -112,6 +123,8 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     pair_internal(target, n, integers);
 }
 
+// This implementation checks it's parameters before
+// delegating to the actual recursive unpairing function.
 void unpair(const size_t n, mpz_t target[n], const mpz_t integer) {
     
     // Ensure n > 0
