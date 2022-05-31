@@ -1,7 +1,7 @@
 #include <stdlib.h>
-#include <assert.h>
+#include <string.h>
 #include <ctype.h>
-#include <stdio.h>
+#include <assert.h>
 
 #include "pash.h"
 
@@ -112,15 +112,36 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
     mpz_clear(y);
 }
 
-// This implementation checks it's parameters before 
+// This implementation checks/copies it's parameters before 
 // delegating to the actual recursive pairing function.
 void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     
     // Ensure n > 0
     assert(n);
 
-    // Delegate to actual pair function
+    // Half of n, rounded up
+    const size_t p = (n + 1) >> 1;
+
+    // Allocate temporary storage
+    mpz_t* tmp = malloc(sizeof(mpz_t) * p);
+
+    // Copy the first p integers into temporary storage
+    for(size_t i = 0; i < p; ++i) {
+        mpz_init_set(tmp[i], integers[i]);
+    }
+
+    // Delegate to the actual pair function
     pair_internal(target, n, integers);
+
+    // Copy the first p integers back into the array,
+    // freeing memory when necessary along the way.
+    for(size_t i = 0; i < p; ++i) {
+        mpz_swap(tmp[i], integers[i]);
+        mpz_clear(tmp[i]);
+    }
+
+    // Free temporary storage itself
+    free(tmp);
 }
 
 // This implementation checks it's parameters before
@@ -130,6 +151,6 @@ void unpair(const size_t n, mpz_t target[n], const mpz_t integer) {
     // Ensure n > 0
     assert(n);
 
-    // Delegate to actual unpair function
+    // Delegate to the actual unpair function
     unpair_internal(n, target, integer);
 }

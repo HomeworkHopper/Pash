@@ -3,7 +3,7 @@
 
 #include "pash.h"
 
-#define N 10    // The number of integers to pair
+#define N 6    // The number of integers to pair
 
 int main() {
 
@@ -29,7 +29,7 @@ int main() {
     mpz_t out[N];
     for(int i = 0; i < N; ++i) {
         mpz_init(out[i]);
-        mpz_clear(in[i]);
+ //     mpz_clear(in[i]);
     }
 
     // Split z back into the original integers
@@ -39,9 +39,11 @@ int main() {
 
     // Print the split integers
     for(int i = 0; i < N; ++i) {
-        gmp_printf("%Zd, ", out[i]);
+        gmp_printf("%Zd, ", in[i]);
         mpz_clear(out[i]);
+        mpz_clear(in[i]);
     }
+
     printf("\n");
 
     free(in);
