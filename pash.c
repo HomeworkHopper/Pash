@@ -91,23 +91,24 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
     // If n is a perfect power of two...
     if(!(n & (n - 1))) {
 
-        // 0.5 * n
+        // Half of n, rounded down
         const size_t mid = n >> 1;
 
-        // Unpair x
+        // Unpair x (recurse)
         unpair_internal(mid, res, x);
 
-        // Unpair y
+        // Unpair y (recurse)
         unpair_internal(mid, res + mid, y);
     } else {
 
-        // Hacker's Delight, First Edition, page 47 
+        // Hacker's Delight, First Edition, page 47
+        // TODO: Make this portable.
         const size_t npt = 0x80000000 >> __builtin_clz(n);
 
-        // Unpair x
+        // Unpair x (recurse)
         unpair_internal(npt, res, x);
 
-        // Unpair y
+        // Unpair y (recurse)
         unpair_internal(n - npt, res + npt, y);
     }
 
