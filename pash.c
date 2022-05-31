@@ -5,6 +5,7 @@
 
 #include "pash.h"
 
+// (x, y) -> z
 #define PAIR(z, x, y) \
     if(mpz_cmp(y, x) > 0) { \
         mpz_mul(z, y, y); \
@@ -14,6 +15,7 @@
     } \
     mpz_add(z, z, x);
 
+// z -> (x, y)
 #define UNPAIR(x, y, z) \
     mpz_sqrtrem(x, y, z); \
     if(mpz_cmp(x, y) > 0) { \
@@ -22,6 +24,9 @@
         mpz_sub(y, y, x); \
     }
 
+// Half of n, rounded up
+#define P_COUNT(n) (n + 1) >> 1
+
 /// An internal helper function which complements the pair function.
 ///
 /// @param z    the resulting integer's destination
@@ -29,8 +34,7 @@
 /// @param x    the array of integers to pair
 static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     
-    // Number of groups of two
-    const size_t p = (n + 1) >> 1;
+    const size_t p = P_COUNT(n);
 
     // Pair each group of two
     for(size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
@@ -119,8 +123,7 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     // Ensure n > 0
     assert(n);
 
-    // Half of n, rounded up
-    const size_t p = (n + 1) >> 1;
+    const size_t p = P_COUNT(n);
 
     // Allocate temporary storage
     mpz_t* tmp = malloc(sizeof(mpz_t) * p);
@@ -140,7 +143,7 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
         mpz_clear(tmp[i]);
     }
 
-    // Free temporary storage itself
+    // Free temporary storage
     free(tmp);
 }
 
