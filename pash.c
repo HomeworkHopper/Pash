@@ -32,7 +32,7 @@
 static inline size_t NPT(size_t n) {
 
     // Hacker's Delight, First Edition, page 47
-    #ifdef __GNUC
+    #ifdef __GNUC__
         return 0x80000000 >> __builtin_clz(n);
     #else
         n = n | (n >> 1);
