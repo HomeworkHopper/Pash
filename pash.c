@@ -27,6 +27,23 @@
 // Half of n, rounded up
 #define P_COUNT(n) (n + 1) >> 1
 
+// Round down to the nearest power of two.
+// Use a builtin compiler function if possible.
+static inline size_t NPT(size_t n) {
+
+    // Hacker's Delight, First Edition, page 47
+    #ifdef __GNUC
+        return 0x80000000 >> __builtin_clz(n);
+    #else
+        n = n | (n >> 1);
+        n = n | (n >> 2);
+        n = n | (n >> 4);
+        n = n | (n >> 8);
+        n = n | (n >> 16);
+        return n - (n >> 1);
+    #endif
+}
+
 /// An internal helper function which complements the pair function.
 ///
 /// @param z    the resulting integer's destination
@@ -101,9 +118,8 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
         unpair_internal(mid, res + mid, y);
     } else {
 
-        // Hacker's Delight, First Edition, page 47
-        // TODO: Make this portable.
-        const size_t npt = 0x80000000 >> __builtin_clz(n);
+        // Find the nearest power of 2 <= n
+        const size_t npt = NPT(n);
 
         // Unpair x (recurse)
         unpair_internal(npt, res, x);
