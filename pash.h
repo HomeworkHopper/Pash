@@ -1,3 +1,9 @@
+// File: pash.h
+//
+// Description: Interface for the pash module
+//
+// Author:      Shaun Thornton
+
 #ifndef PASH_H
 #define PASH_H
 

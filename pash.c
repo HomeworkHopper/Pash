@@ -1,3 +1,13 @@
+// File: pash.c
+//
+// Description: Implementation of the pash module. Pair/unpair functions
+//              delegate to internal recursive functions, and the underlining
+//              Szudzik pairing/unpairing operations are defined as macros.
+//
+// @author      Shaun Thornton
+//
+// // // // // // // // // // // // // // // // // // // // // // // // //
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -33,14 +43,14 @@ static inline size_t NPT(size_t n) {
 
     // Hacker's Delight, First Edition, page 47
     #ifdef __GNUC__
-        return 0x80000000 >> __builtin_clz(n);
+        return  0x80000000 >> __builtin_clz(n);
     #else
-        n = n | (n >> 1);
-        n = n | (n >> 2);
-        n = n | (n >> 4);
-        n = n | (n >> 8);
-        n = n | (n >> 16);
-        return n - (n >> 1);
+        n =     n | (n >> 1);
+        n =     n | (n >> 2);
+        n =     n | (n >> 4);
+        n =     n | (n >> 8);
+        n =     n | (n >>16);
+        return  n - (n >> 1);
     #endif
 }
 
