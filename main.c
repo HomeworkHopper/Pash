@@ -3,48 +3,30 @@
 
 #include "pash.h"
 
-#define N 6    // The number of integers to pair
-
 int main() {
 
-    // Starting array of integers
-    mpz_t* in = malloc(sizeof(mpz_t) * N);
+    mpz_t a;
+    mpz_t b;
+    mpz_t c;
 
-    // Initialize and print each integer
-    for(int i = 0; i < N; ++i) {
-        mpz_init_set_ui(in[i], i + 1);
-        gmp_printf("%Zd, ", in[i]);
-    }
+    mpz_init_set_ui(a, 2);
+    mpz_init_set_ui(b, 3);
+    mpz_init_set_ui(c, 1);
 
-    // Declare and initialize the paired output
+    mpz_t arr[3];
+
+    (*arr[0]) = *a;
+    (*arr[1]) = *b;
+    (*arr[2]) = *c;
+
     mpz_t z;
     mpz_init(z);
 
-    // Pair the array of integers into a single integer (z)
-    pair(z, N, in);
+    pair(z, 3, arr);
 
-    // Print the generated integer
-    gmp_printf("\n%Zd\n", z);
+    gmp_printf("%Zd\n", z);
 
-    mpz_t out[N];
-    for(int i = 0; i < N; ++i) {
-        mpz_init(out[i]);
- //     mpz_clear(in[i]);
-    }
+    unpair(3, arr, z);
 
-    // Split z back into the original integers
-    unpair(N, out, z);
-
-    mpz_clear(z);
-
-    // Print the split integers
-    for(int i = 0; i < N; ++i) {
-        gmp_printf("%Zd, ", in[i]);
-        mpz_clear(out[i]);
-        mpz_clear(in[i]);
-    }
-
-    printf("\n");
-
-    free(in);
+    gmp_printf("%Zd, %Zd, %Zd\n", arr[0], arr[1], arr[2]);
 }
