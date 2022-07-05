@@ -11,11 +11,20 @@
 #include <gmp.h>
 
 /// A function which pairs the provided n integers into a single integer.
+/// The provided integers are expected to be MPZ integers.
 ///
 /// @param target   the resulting integer's destination
 /// @param n        the number of integers to pair
 /// @param integers the array of integers to pair
 void pair(mpz_t target, const size_t n, mpz_t integers[n]);
+
+/// A function which pairs the provided n integers into a single integer.
+/// The provided integers are expected to be unsigned, primitive integers.
+///
+/// @param target   the resulting integer's destination
+/// @param n        the number of integers to pair
+/// @param integers the array of integers to pair
+void pair_ui(mpz_t target, const size_t n, size_t integers[n]);
 
 /// A function which unpairs an integer into n seperate integers.
 ///

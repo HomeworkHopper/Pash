@@ -162,9 +162,6 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
 
 // This implementation checks/copies it's parameters before 
 // delegating to the actual recursive pairing function.
-//
-// A copy of the first half of the provided array is made
-// because the actual pair function mangles this half.
 void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     
     // Ensure n > 0
@@ -198,6 +195,36 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
 
     // Free temporary storage
     free(tmp);
+}
+
+// This implementation checks/copies it's parameters before
+// delegating to the actual recursive pairing function.
+void pair_ui(mpz_t target, const size_t n, size_t integers_ui[n]) {
+    
+    // Ensure n > 0
+    assert(n);
+
+    // Allocate storage for MPZ integers
+    mpz_t* integers = malloc(sizeof(mpz_t) * n);
+
+    // Ensure the memory allocation succeeded
+    assert(integers);
+
+    // Convert the provided integers to MPZ integers
+    for(register size_t i = 0; i < n; ++i) {
+        mpz_init_set_ui(integers[i], integers_ui[i]);
+    }
+
+    // Delegate to the actual pair function
+    pair_internal(target, n, integers);
+
+    // Clean up
+    for(register size_t i = 0; i < n; ++i) {
+        mpz_clear(integers[i]);
+    }
+
+    // Free the MPZ integers
+    free(integers);
 }
 
 // This implementation checks it's parameters before

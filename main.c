@@ -5,28 +5,30 @@
 
 int main() {
 
-    mpz_t a;
-    mpz_t b;
-    mpz_t c;
+    // Source integers
+    size_t arr[] = {69, 420, 1234};
 
-    mpz_init_set_ui(a, 2);
-    mpz_init_set_ui(b, 3);
-    mpz_init_set_ui(c, 1);
-
-    mpz_t arr[3];
-
-    (*arr[0]) = *a;
-    (*arr[1]) = *b;
-    (*arr[2]) = *c;
-
+    // Target integers
     mpz_t z;
     mpz_init(z);
 
-    pair(z, 3, arr);
+    // Pair the integers into z
+    pair_ui(z, 3, arr);
 
+    // Print z
     gmp_printf("%Zd\n", z);
 
-    unpair(3, arr, z);
+    // Result integers
+    mpz_t res[3];
 
-    gmp_printf("%Zd, %Zd, %Zd\n", arr[0], arr[1], arr[2]);
+    // Initialize result integers
+    for(int i = 0; i < 3; ++i) {
+        mpz_init(res[i]);
+    }
+
+    // Unpair z into result integers
+    unpair(3, res, z);
+
+    // Print result integers, should equal initial integers
+    gmp_printf("%Zd, %Zd, %Zd\n", res[0], res[1], res[2]);
 }
