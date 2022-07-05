@@ -8,12 +8,11 @@
 //
 // // // // // // // // // // // // // // // // // // // // // // // // //
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <assert.h>
+#include <ctype.h>      // size_t
+#include <stdlib.h>     // malloc & free
+#include <assert.h>     // assertions
 
-#include "pash.h"
+#include "pash.h"       // Module interface
 
 // (x, y) -> z
 #define PAIR(z, x, y) \
@@ -35,16 +34,23 @@
     }
 
 // Half of n, rounded up
-#define P_COUNT(n) (n + 1) >> 1
+#define PAIR_COUNT(n) (n + 1) >> 1
 
-// Round down to the nearest power of two.
-// Use a builtin compiler function if possible.
-static inline size_t NPT(size_t n) {
+/// Inlined helper function which finds the nearest power of 
+/// two less than or equal to the provided integer value.
+///
+/// @param n    an unsigned, non-zero number
+/// @returns    the nearest power of two <= n
+static inline __attribute__((always_inline)) size_t NPT(size_t n) {
 
-    // Hacker's Delight, First Edition, page 47
+    // Use a (fast) compiler builtin function if possible
     #ifdef __GNUC__
+        // This will ideally use the Bit Scan Reverse (BSR) instruction
+        // if the CPU supports it, but will at the very least generate
+        // something more efficent than the fallback implementation below.
         return  0x80000000 >> __builtin_clz(n);
     #else
+        // Fallback implementation (Hacker's Delight, First Edition, page 47)
         n =     n | (n >> 1);
         n =     n | (n >> 2);
         n =     n | (n >> 4);
@@ -60,24 +66,28 @@ static inline size_t NPT(size_t n) {
 /// @param n    the number of integers to pair
 /// @param x    the array of integers to pair
 static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
-    
-    const size_t p = P_COUNT(n);
+ 
+    // The number of groups of two we can make
+    const size_t p = PAIR_COUNT(n);
 
     // Pair each group of two
-    for(size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
+    for(volatile size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
         PAIR(z, x[j], x[j + 1]);
         mpz_swap(x[i], z);
     }
 
     // Take care of the last group
     if(!(n & 1)) {
+        // If n is even, pair the remaining two integers together
         PAIR(z, x[n - 2], x[n - 1]);
     } else {
+        // If n is odd, simply carry down the remaining integer
         mpz_set(z, x[n - 1]);
     }
 
-    // If there was only one group, we're done
+    // Base case
     if(p == 1) {
+        // If there was only one group, we're done
         return;
     }
 
@@ -97,12 +107,14 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
 
     // Base case #1
     if(n == 1) {
+        // Copy the sole remaining integer in this branch and return
         mpz_set(res[0], z);
         return;
     }
 
     // Base case #2
     if(n == 2) {
+        // Split the sole remaining integer in this branch and return
         UNPAIR(res[0], res[1], z);
         return;
     }
@@ -145,28 +157,37 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
 
 // This implementation checks/copies it's parameters before 
 // delegating to the actual recursive pairing function.
+//
+// A copy of the first half of the provided array is made
+// because the actual pair function mangles this half.
 void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     
     // Ensure n > 0
     assert(n);
 
-    const size_t p = P_COUNT(n);
+    // The number of groups of two we can make
+    const size_t p = PAIR_COUNT(n);
 
     // Allocate temporary storage
     mpz_t* tmp = malloc(sizeof(mpz_t) * p);
 
+    // Ensure the memory allocation succeeded
+    assert(tmp);
+
     // Copy the first p integers into temporary storage
-    for(size_t i = 0; i < p; ++i) {
+    for(volatile size_t i = 0; i < p; ++i) {
         mpz_init_set(tmp[i], integers[i]);
     }
 
     // Delegate to the actual pair function
     pair_internal(target, n, integers);
 
-    // Copy the first p integers back into the array,
-    // freeing memory when necessary along the way.
-    for(size_t i = 0; i < p; ++i) {
+    // Copy the first p integers back into the array
+    for(volatile size_t i = 0; i < p; ++i) {
+        // Swap out garbage value with original value
         mpz_swap(tmp[i], integers[i]);
+
+        // Free the memory associated with the garbage value
         mpz_clear(tmp[i]);
     }
 
