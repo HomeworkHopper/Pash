@@ -76,7 +76,7 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     const size_t p = PAIR_COUNT(n);
 
     // Pair each group of two
-    for(volatile size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
+    for(register size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
         PAIR(z, x[j], x[j + 1]);
         mpz_swap(x[i], z);
     }
@@ -188,7 +188,7 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     pair_internal(target, n, integers);
 
     // Copy the first p integers back into the array
-    for(volatile size_t i = 0; i < p; ++i) {
+    for(register size_t i = 0; i < p; ++i) {
         // Swap out garbage value with original value
         mpz_swap(tmp[i], integers[i]);
 
