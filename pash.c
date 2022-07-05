@@ -14,6 +14,11 @@
 
 #include "pash.h"       // Module interface
 
+// If we're not using GNU C, elide __attribute__
+#ifndef __GNUC__
+    #define  __attribute__(x)  /*NOTHING*/
+#endif
+
 // (x, y) -> z
 #define PAIR(z, x, y) \
     if(mpz_cmp(y, x) > 0) { \
@@ -43,7 +48,7 @@
 /// @returns    the nearest power of two <= n
 static inline __attribute__((always_inline)) size_t NPT(size_t n) {
 
-    // Use a (fast) compiler builtin function if possible
+    // Use a (fast) GNU C builtin function if possible
     #ifdef __GNUC__
         // This will ideally use the Bit Scan Reverse (BSR) instruction
         // if the CPU supports it, but will at the very least generate
@@ -175,7 +180,7 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     assert(tmp);
 
     // Copy the first p integers into temporary storage
-    for(volatile size_t i = 0; i < p; ++i) {
+    for(register size_t i = 0; i < p; ++i) {
         mpz_init_set(tmp[i], integers[i]);
     }
 
