@@ -7,7 +7,9 @@
 #ifndef PASH_H
 #define PASH_H
 
-// Use the GNU Multiple Precision Arithmetic Library
+#include <ctype.h>
+
+// GNU Multiple Precision Arithmetic Library
 #include <gmp.h>
 
 /// A function which pairs the provided n integers into a single integer.

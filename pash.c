@@ -8,11 +8,10 @@
 //
 // // // // // // // // // // // // // // // // // // // // // // // // //
 
-#include <ctype.h>      // size_t
+#include "pash.h"       // Module interface
+
 #include <stdlib.h>     // malloc & free
 #include <assert.h>     // assertions
-
-#include "pash.h"       // Module interface
 
 // If we're not using GNU C, elide __attribute__
 #ifndef __GNUC__
