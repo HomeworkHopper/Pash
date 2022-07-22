@@ -4,6 +4,8 @@
 //              delegate to internal recursive functions, and the underlining
 //              Szudzik pairing/unpairing operations are defined as macros.
 //
+//              All function arguments are expected to be already initialized.
+//
 // @author      Shaun Thornton
 //
 // // // // // // // // // // // // // // // // // // // // // // // // //
@@ -15,7 +17,7 @@
 
 // If we're not using GNU C, elide __attribute__
 #ifndef __GNUC__
-    #define  __attribute__(x)  /*NOTHING*/
+    #define  __attribute__(x)  /*Literally why.*/
 #endif
 
 // (x, y) -> z
@@ -75,7 +77,7 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     const size_t p = PAIR_COUNT(n);
 
     // Pair each group of two
-    for(register size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
+    for(size_t i = 0, j = 0; i < p - 1; ++i, j += 2) {
         PAIR(z, x[j], x[j + 1]);
         mpz_swap(x[i], z);
     }
@@ -176,7 +178,7 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     assert(tmp);
 
     // Copy the first p integers into temporary storage
-    for(register size_t i = 0; i < p; ++i) {
+    for(size_t i = 0; i < p; ++i) {
         mpz_init_set(tmp[i], integers[i]);
     }
 
@@ -184,7 +186,7 @@ void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
     pair_internal(target, n, integers);
 
     // Copy the first p integers back into the array
-    for(register size_t i = 0; i < p; ++i) {
+    for(size_t i = 0; i < p; ++i) {
         // Swap out garbage value with original value
         mpz_swap(tmp[i], integers[i]);
 
@@ -210,7 +212,7 @@ void pair_ui(mpz_t target, const size_t n, size_t integers_ui[n]) {
     assert(integers);
 
     // Convert the provided integers to MPZ integers
-    for(register size_t i = 0; i < n; ++i) {
+    for(size_t i = 0; i < n; ++i) {
         mpz_init_set_ui(integers[i], integers_ui[i]);
     }
 
@@ -218,7 +220,7 @@ void pair_ui(mpz_t target, const size_t n, size_t integers_ui[n]) {
     pair_internal(target, n, integers);
 
     // Clean up
-    for(register size_t i = 0; i < n; ++i) {
+    for(size_t i = 0; i < n; ++i) {
         mpz_clear(integers[i]);
     }
 
