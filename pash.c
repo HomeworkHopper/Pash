@@ -15,11 +15,6 @@
 #include <stdlib.h>     // malloc & free
 #include <assert.h>     // assertions
 
-// If we're not using GNU C, elide __attribute__
-#ifndef __GNUC__
-    #define  __attribute__(x)  /*Literally why.*/
-#endif
-
 // (x, y) -> z
 #define PAIR(z, x, y) \
     if(mpz_cmp(y, x) > 0) { \
@@ -42,29 +37,20 @@
 // Half of n, rounded up
 #define PAIR_COUNT(n) (n + 1) >> 1
 
-/// Inlined helper function which finds the nearest power of 
-/// two less than or equal to the provided integer value.
-///
-/// @param n    an unsigned, non-zero number
-/// @returns    the nearest power of two <= n
-static inline __attribute__((always_inline)) size_t NPT(size_t n) {
-
-    // Use a (fast) GNU C builtin function if possible
-    #ifdef __GNUC__
-        // This will ideally use the Bit Scan Reverse (BSR) instruction
-        // if the CPU supports it, but will at the very least generate
-        // something more efficent than the fallback implementation below.
-        return  0x80000000 >> __builtin_clz(n);
-    #else
-        // Fallback implementation (Hacker's Delight, First Edition, page 47)
+// Nearest power of 2 <= n
+#ifdef __GNUC__
+	#define NPT(n) 0x80000000 >> __builtin_clz(n)
+#else
+	static inline size_t NPT(size_t n) {
+        // Hacker's Delight, First Edition, page 47
         n =     n | (n >> 1);
         n =     n | (n >> 2);
         n =     n | (n >> 4);
         n =     n | (n >> 8);
         n =     n | (n >>16);
         return  n - (n >> 1);
-    #endif
-}
+	}
+#endif
 
 /// An internal helper function which complements the pair function.
 ///
