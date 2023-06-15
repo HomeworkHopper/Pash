@@ -7,8 +7,6 @@
 #ifndef PASH_H
 #define PASH_H
 
-#include <ctype.h>
-
 // GNU Multiple Precision Arithmetic Library
 #include <gmp.h>
 
