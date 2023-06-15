@@ -51,7 +51,7 @@
 	}
 #endif
 
-/// An internal helper function which complements the pair function.
+/// An internal helper function for pair() and pair_ui()
 ///
 /// @param z    the resulting integer's destination
 /// @param n    the number of integers to pair
@@ -144,7 +144,7 @@ void pair_ui(mpz_t target, const size_t n, size_t integers_ui[n]) {
     free(integers);
 }
 
-// Delegates to the actual recursive unpairing function.
+// Unpair implementation
 void unpair(const size_t n, mpz_t res[n], const mpz_t z) {
 
     // Base case #1
