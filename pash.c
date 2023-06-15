@@ -13,7 +13,6 @@
 #include "pash.h"       // Module interface
 
 #include <stdlib.h>     // malloc & free
-#include <assert.h>     // assertions
 
 // (x, y) -> z
 #define PAIR(z, x, y) \
@@ -90,12 +89,63 @@ static void pair_internal(mpz_t z, const size_t n, mpz_t x[n]) {
     pair_internal(z, p, x);
 }
 
-/// An internal helper function which complements the unpair function.
-///
-/// @param n    the number of integers to produce
-/// @param res  the resulting integers' destination
-/// @param z    the integer to unpair
-static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
+// This implementation copies it's parameters before 
+// delegating to the actual recursive pairing function.
+void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
+    
+    // The number of groups of two we can make
+    const size_t p = PAIR_COUNT(n);
+
+    // Allocate temporary storage
+    mpz_t* tmp = malloc(sizeof(mpz_t) * p);
+
+    // Copy the first p integers into temporary storage
+    for(size_t i = 0; i < p; ++i) {
+        mpz_init_set(tmp[i], integers[i]);
+    }
+
+    // Delegate to the actual pair function
+    pair_internal(target, n, integers);
+
+    // Copy the first p integers back into the array
+    for(size_t i = 0; i < p; ++i) {
+        // Swap out garbage value with original value
+        mpz_swap(tmp[i], integers[i]);
+
+        // Free the memory associated with the garbage value
+        mpz_clear(tmp[i]);
+    }
+
+    // Free temporary storage
+    free(tmp);
+}
+
+// This implementation copies it's parameters before
+// delegating to the actual recursive pairing function.
+void pair_ui(mpz_t target, const size_t n, size_t integers_ui[n]) {
+    
+    // Allocate storage for MPZ integers
+    mpz_t* integers = malloc(sizeof(mpz_t) * n);
+
+    // Convert the provided integers to MPZ integers
+    for(size_t i = 0; i < n; ++i) {
+        mpz_init_set_ui(integers[i], integers_ui[i]);
+    }
+
+    // Delegate to the actual pair function
+    pair_internal(target, n, integers);
+
+    // Clean up
+    for(size_t i = 0; i < n; ++i) {
+        mpz_clear(integers[i]);
+    }
+
+    // Free the MPZ integers
+    free(integers);
+}
+
+// Delegates to the actual recursive unpairing function.
+void unpair(const size_t n, mpz_t res[n], const mpz_t z) {
 
     // Base case #1
     if(n == 1) {
@@ -126,101 +176,23 @@ static void unpair_internal(const size_t n, mpz_t res[n], const mpz_t z) {
         const size_t mid = n >> 1;
 
         // Unpair x (recurse)
-        unpair_internal(mid, res, x);
+        unpair(mid, res, x);
 
         // Unpair y (recurse)
-        unpair_internal(mid, res + mid, y);
+        unpair(mid, res + mid, y);
     } else {
 
         // Find the nearest power of 2 <= n
         const size_t npt = NPT(n);
 
         // Unpair x (recurse)
-        unpair_internal(npt, res, x);
+        unpair(npt, res, x);
 
         // Unpair y (recurse)
-        unpair_internal(n - npt, res + npt, y);
+        unpair(n - npt, res + npt, y);
     }
 
     // Clean up
     mpz_clear(x);
     mpz_clear(y);
-}
-
-// This implementation checks/copies it's parameters before 
-// delegating to the actual recursive pairing function.
-void pair(mpz_t target, const size_t n, mpz_t integers[n]) {
-    
-    // Ensure n > 0
-    assert(n);
-
-    // The number of groups of two we can make
-    const size_t p = PAIR_COUNT(n);
-
-    // Allocate temporary storage
-    mpz_t* tmp = malloc(sizeof(mpz_t) * p);
-
-    // Ensure the memory allocation succeeded
-    assert(tmp);
-
-    // Copy the first p integers into temporary storage
-    for(size_t i = 0; i < p; ++i) {
-        mpz_init_set(tmp[i], integers[i]);
-    }
-
-    // Delegate to the actual pair function
-    pair_internal(target, n, integers);
-
-    // Copy the first p integers back into the array
-    for(size_t i = 0; i < p; ++i) {
-        // Swap out garbage value with original value
-        mpz_swap(tmp[i], integers[i]);
-
-        // Free the memory associated with the garbage value
-        mpz_clear(tmp[i]);
-    }
-
-    // Free temporary storage
-    free(tmp);
-}
-
-// This implementation checks/copies it's parameters before
-// delegating to the actual recursive pairing function.
-void pair_ui(mpz_t target, const size_t n, size_t integers_ui[n]) {
-    
-    // Ensure n > 0
-    assert(n);
-
-    // Allocate storage for MPZ integers
-    mpz_t* integers = malloc(sizeof(mpz_t) * n);
-
-    // Ensure the memory allocation succeeded
-    assert(integers);
-
-    // Convert the provided integers to MPZ integers
-    for(size_t i = 0; i < n; ++i) {
-        mpz_init_set_ui(integers[i], integers_ui[i]);
-    }
-
-    // Delegate to the actual pair function
-    pair_internal(target, n, integers);
-
-    // Clean up
-    for(size_t i = 0; i < n; ++i) {
-        mpz_clear(integers[i]);
-    }
-
-    // Free the MPZ integers
-    free(integers);
-}
-
-// This implementation checks it's parameters before
-// delegating to the actual recursive unpairing function.
-void unpair(const size_t n, mpz_t target[n], const mpz_t integer) {
-    
-    // Ensure n > 0
-    assert(n);
-
-    // Delegate to the actual unpair function
-    unpair_internal(n, target, integer);
 }
